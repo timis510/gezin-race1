@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10264b">
+<title>Family Athletics – Gezinsrace</title>
+<style>
+:root{--navy:#10264b;--blue:#2878e8;--gold:#ffd45a;--red:#e94d4d;--ink:#17243a}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:var(--ink);background:radial-gradient(ellipse at 50% -10%,#3f83c7 0,#172e58 42%,#0b1832 100%);padding:18px}
+button,select{font:inherit}
+button{border:0;border-radius:14px;padding:12px 18px;font-weight:800;cursor:pointer;transition:transform .12s,filter .12s}
+button:active{transform:scale(.97)}
+button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.wrap{max-width:1000px;margin:auto}
+header{text-align:center;color:white;margin:8px 0 18px}
+.logo{display:inline-flex;align-items:center;gap:10px;background:#ffffff18;border:1px solid #ffffff35;border-radius:999px;padding:7px 15px;font-size:12px;font-weight:900;letter-spacing:2px;text-transform:uppercase}
+h1{font-size:clamp(30px,6vw,52px);line-height:1;margin:14px 0 7px;text-shadow:0 4px 0 #07142a}
+header p{margin:0;color:#d4e4ff}
+.panel{background:#f8fbff;border:1px solid #ffffff80;border-radius:24px;padding:clamp(14px,3vw,26px);box-shadow:0 22px 60px #0005}
+.section-title{display:flex;align-items:center;gap:9px;margin:0 0 13px;font-size:19px}
+.pickers{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:end}
+.pick{background:white;border:1px solid #dce5f2;border-radius:17px;padding:13px}
+.pick label{display:block;font-size:12px;font-weight:900;color:#63728a;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.pick select{width:100%;border:1px solid #d7e1ef;background:#f6f9fe;border-radius:10px;padding:11px;color:var(--ink);font-weight:800}
+.vs{font-weight:1000;color:#8291a7;padding-bottom:13px}
+.actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:16px 0 4px}
+.primary{background:linear-gradient(135deg,#3187ff,#1456c7);color:white;box-shadow:0 5px 0 #0d3d91}
+.secondary{background:#e8eef7;color:#34445e}
+.sound{font-size:13px}
+.stadium{margin-top:20px;border-radius:21px;overflow:hidden;background:#163b69;box-shadow:inset 0 0 0 1px #ffffff35}
+.sky{height:83px;position:relative;overflow:hidden;background:linear-gradient(#76c7f7,#b9e6ff 65%,#3973a4 66%);display:flex;align-items:flex-end;justify-content:center}
+.sun{position:absolute;right:8%;top:10px;width:38px;height:38px;border-radius:50%;background:#fff3a2;box-shadow:0 0 35px #fff8a5}
+.stands{position:absolute;inset:32px 0 0;background:repeating-linear-gradient(90deg,#234a77 0 24px,#315c89 24px 48px);border-top:5px solid #d5e9ff}
+.crowd{position:absolute;left:0;right:0;bottom:0;height:42px;display:flex;justify-content:space-around;align-items:flex-end;font-size:19px;letter-spacing:1px;filter:saturate(.8)}
+.crowd span:nth-child(odd){transform:translateY(2px)}
+.track{position:relative;padding:15px 14px 17px;background:linear-gradient(110deg,#c63f38,#ed6854 48%,#c63f38);border-top:6px solid #f3f7fc}
+.track:before{content:"";position:absolute;inset:7px 9px;border:2px solid #ffffff65;border-radius:14px;pointer-events:none}
+.lane{height:78px;position:relative;margin:7px 0;border-radius:12px;overflow:hidden;background:repeating-linear-gradient(90deg,#dc6557 0 53px,#fff 54px 56px);border:2px solid #ffe6df;box-shadow:inset 0 4px 9px #7e201b40}
+.lane:after{content:"";position:absolute;left:0;right:0;top:50%;border-top:1px dashed #ffffff9c}
+.lane-label{position:absolute;left:10px;top:5px;font-size:10px;font-weight:1000;color:#fff;text-shadow:0 1px 3px #7e201b;z-index:2}
+.runner{position:absolute;left:2%;top:18px;z-index:3;font-size:37px;line-height:1;transform:scaleX(-1);filter:drop-shadow(0 3px 2px #5b1d1b80);transition:left .055s linear}
+.runner.running{animation:bob .18s infinite alternate}
+@keyframes bob{from{transform:scaleX(-1) translateY(0) rotate(-5deg)}to{transform:scaleX(-1) translateY(-4px) rotate(5deg)}}
+.finish{position:absolute;right:8px;top:0;bottom:0;width:17px;z-index:1;border-left:3px solid white;border-right:3px solid white;background:repeating-conic-gradient(#fff 0 25%,#172033 0 50%) 0/12px 12px}
+.lane.done{filter:saturate(.7)}
+.lane.done:before{content:"FINISH";position:absolute;right:31px;top:9px;z-index:4;background:#15365f;color:#fff;padding:4px 8px;border-radius:7px;font-size:10px;font-weight:1000}
+.status{min-height:30px;text-align:center;color:white;font-size:22px;font-weight:1000;letter-spacing:1px;padding:3px}
+.status.go{color:#ffe16b;text-shadow:0 2px 8px #552000}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+.tap{min-height:74px;color:white;font-size:18px;box-shadow:0 5px 0 #0003;touch-action:none;-webkit-user-select:none;user-select:none}
+.tap.one{background:linear-gradient(135deg,#2878e8,#1749a6)}
+.tap.two{background:linear-gradient(135deg,#e65353,#a92737)}
+.tap small{display:block;font-size:11px;opacity:.8;font-weight:700;margin-top:3px}
+.hint{text-align:center;color:#728198;font-size:12px;margin:10px 0 0}
+.results{display:none;margin-top:18px;background:linear-gradient(135deg,#fff8dd,#ffedb4);border:1px solid #f1d77c;border-radius:18px;padding:17px;text-align:center}
+.results.show{display:block}
+.results h2{margin:0 0 10px}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.result-card{background:#fff;border-radius:13px;padding:12px;font-weight:800}
+.result-card strong{display:block;font-size:25px;color:#173f77}
+.winner{font-size:21px;font-weight:1000;color:#8b5b00;margin:12px 0 0}
+.rank{margin-top:20px}
+.rank-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.rank h2{margin:0;font-size:19px}
+.rank table{width:100%;border-collapse:collapse;margin-top:10px;background:white;border-radius:13px;overflow:hidden;font-size:14px}
+.rank th,.rank td{padding:10px 8px;text-align:left;border-bottom:1px solid #edf1f6}
+.rank th{background:#edf3fb;color:#63728a;font-size:11px;text-transform:uppercase;letter-spacing:.7px}
+.rank tr:last-child td{border-bottom:0}
+.rank td:not(:first-child),.rank th:not(:first-child){text-align:center}
+.rank-empty{padding:17px;text-align:center;color:#7b8798;background:white;border-radius:13px;margin-top:10px}
+.foot{text-align:center;color:#a9bedc;font-size:11px;margin:14px 0 2px}
+.screen{display:none!important}.screen.active{display:block!important}.screen-title{text-align:center;margin:2px 0 18px}.screen-title h2{margin:0 0 5px;font-size:25px}.screen-title p{margin:0;color:#718096}.screen-nav{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:16px}
+.shop-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.wallet{background:#fff4ce;border:1px solid #efd27b;border-radius:14px;padding:10px 14px;font-weight:1000;color:#805500}.home-wallets{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}.player-wallet{background:#fff4ce;border:1px solid #efd27b;border-radius:12px;padding:9px;text-align:center;font-weight:900;color:#805500}
+.shop-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.shop-item{background:#fff;border:1px solid #dce5f2;border-radius:16px;padding:14px}
+.shop-item h3{margin:0 0 5px}.shop-item p{font-size:13px;color:#68778d;min-height:38px;margin:0 0 10px}
+.shop-item button{width:100%}.objectives{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px}
+.objective{background:#f0f5fc;border-radius:12px;padding:10px;font-size:13px}
+.objective strong{display:block;color:#244d82}
+.power-controls{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.power-controls button{font-size:12px;padding:9px 5px;background:#fff1c9;color:#684600;border:1px solid #f0d37a}
+.reward-note{font-size:13px;color:#52637c;background:#eef4fc;padding:10px;border-radius:12px;margin-top:12px}
+@media(max-width:600px){.shop-grid,.objectives{grid-template-columns:1fr}.shop-item p{min-height:0}}
+@media(max-width:600px){body{padding:10px}.pickers{grid-template-columns:1fr 1fr}.vs{display:none}.pick{padding:10px}.lane{height:70px}.runner{top:15px}.controls{gap:8px}.tap{font-size:15px;padding:10px 6px}.rank table{font-size:12px}.rank th,.rank td{padding:8px 4px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo">🏅 Family sports club</div>
+  <h1>FAMILY ATHLETICS</h1>
+  <p>Wie is het snelst van de familie?</p>
+</header>
+<main class="panel">
+  <section class="screen active" id="homeScreen">
+  <div class="screen-title"><h2>👟 Kies je racers</h2><p>Kies twee verschillende spelers en maak je klaar voor de start.</p></div>
+  <div class="pickers">
+    <div class="pick"><label for="p1">🔵 Speler 1</label><select id="p1"></select></div>
+    <div class="vs">VS</div>
+    <div class="pick"><label for="p2">🔴 Speler 2</label><select id="p2"></select></div>
+  </div>
+  <div class="actions">
+    <button class="primary" id="start">🏁 Start de race</button>
+    <button class="secondary sound" id="sound">🔊 Geluid aan</button>
+    <button class="secondary" id="openShop">🛒 Shop & doelstellingen</button>
+  </div>
+  <div class="home-wallets" id="homeWallets" aria-label="Munten per speler"></div>
+  </section>
+  <section class="screen" id="raceScreen">
+  <div class="screen-title"><h2>🏟️ De race is begonnen!</h2><p>Tik zo snel mogelijk op je eigen knop.</p></div>
+  <section class="stadium" aria-label="Atletiekstadion">
+    <div class="sky"><div class="sun"></div><div class="stands"></div><div class="crowd"><span>🙌</span><span>👏</span><span>🎉</span><span>🙌</span><span>👏</span><span>🎉</span><span>🙌</span><span>👏</span><span>🎉</span></div></div>
+    <div class="track">
+      <div class="lane" id="lane1"><span class="lane-label" id="label1">BAAN 1 · PAUL</span><span class="runner" id="r1">🏃</span><span class="finish"></span></div>
+      <div class="lane" id="lane2"><span class="lane-label" id="label2">BAAN 2 · MEREL</span><span class="runner" id="r2">🏃‍♀️</span><span class="finish"></span></div>
+    </div>
+    <div class="status" id="status">KLAAR VOOR DE START?</div>
+  </section>
+  <div class="controls">
+    <button class="tap one" id="b1">🔵 SPELER 1 – TIK!<small>Toets A op je toetsenbord</small></button>
+    <button class="tap two" id="b2">🔴 SPELER 2 – TIK!<small>Toets L op je toetsenbord</small></button>
+  </div>
+  <p class="hint">Op een telefoon: tik met je vinger op de grote blauwe of rode knop. Jullie kunnen allebei tegelijk tikken!</p>
+  <div class="power-controls">
+    <button id="boost1">⚡ Speler 1: boost (0)</button>
+    <button id="slow1">🌀 Speler 1: vertraag (0)</button>
+    <button id="boost2">⚡ Speler 2: boost (0)</button>
+    <button id="slow2">🌀 Speler 2: vertraag (0)</button>
+  </div>
+  </section>
+  <section class="screen" id="endScreen">
+  <div class="screen-title"><h2>🏁 De finish!</h2><p>Dit is de uitslag van jullie race.</p></div>
+  <section class="results show" id="results">
+    <h2>🏆 Race-uitslag</h2>
+    <div class="result-grid">
+      <div class="result-card" id="res1">Speler 1<strong>0,00 s</strong></div>
+      <div class="result-card" id="res2">Speler 2<strong>0,00 s</strong></div>
+    </div>
+    <div class="winner" id="winner"></div>
+    <div class="reward-note" id="rewardNote"></div>
+  </section>
+  <section class="rank">
+    <div class="rank-head"><h2>🏆 All-time klassement</h2><button class="secondary sound" id="resetRank">Wis klassement</button></div>
+    <div id="rankContent"></div>
+  </section>
+  <div class="screen-nav">
+    <button class="primary" id="continueHome">➡️ Doorgaan naar homepage</button>
+  </div>
+  </section>
+  <section class="screen" id="shopScreen">
+    <div class="screen-title"><button class="secondary" id="shopBackTop" style="float:left;padding:8px 12px">← Terug</button><h2>🛒 Family Athletics-shop</h2><p>Verdien virtuele euro's en koop handige raceboosts.</p></div>
+    <div class="pick"><label for="shopPlayer">Voor wie wil je iets kopen?</label><select id="shopPlayer"></select></div>
+    <div class="shop-top"><div class="wallet" id="shopWallet">💰 €0</div></div>
+    <div class="shop-grid">
+      <div class="shop-item"><h3>👟 Superschoenen</h3><p id="shoesDescription">Geeft jouw speler bij alle races permanent 5% extra snelheid.</p><button class="primary" id="buyShoes">Koop voor 5 munten</button><div id="shoesLevel">Nog niet gekocht</div></div>
+      <div class="shop-item"><h3>⚡ Supersprint</h3><p>Geeft jouw hardloper meteen een flinke voorsprong tijdens de race. Eén keer te gebruiken.</p><button class="primary" id="buyBoost">Koop voor €3</button><div id="boostOwned">Op voorraad: 0</div></div>
+      <div class="shop-item"><h3>🌀 Modderplas</h3><p>Vertraagt de tegenstander tijdens de race. Eén keer te gebruiken.</p><button class="primary" id="buySlow">Koop voor 3 munten</button><div id="slowOwned">Op voorraad: 0</div></div>
+      <div class="shop-item"><h3>🛡️ Bescherming</h3><p>Beschermt je tegen modderplassen. Niveau 1: je gaat 50% minder achteruit. Upgrade: je gaat 75% minder achteruit.</p><button class="primary" id="buyProtection">Koop voor 5 munten</button><div id="protectionLevel">Nog niet gekocht</div></div>
+    </div>
+    <h3 style="margin:20px 0 8px">🎯 Doelstellingen</h3>
+    <div class="objectives">
+      <div class="objective"><strong>🥇 Win een race</strong>+€1 voor de winnaar</div>
+      <div class="objective"><strong>⏱️ Racetijd</strong>Onder 6 seconden: +1 munt · onder 7 seconden: 0 munten · boven 7 seconden: −1 munt</div>
+      <div class="objective"><strong>🥈 Wedstrijd verliezen</strong>−1 munt voor de verliezer</div>
+      <div class="objective"><strong>🏃 Actief blijven</strong>Elke 3 races gespeeld: +1 munt</div>
+    </div>
+    <div class="reward-note">Dit zijn spelmunten, geen echt geld. Iedere speler heeft een eigen portemonnee en eigen upgrades. Je kunt nooit minder dan 0 munten hebben. Superschoenen geven permanent 5% extra snelheid en kun je voor 5 munten upgraden naar 10%. Bescherming vermindert de terugslag van een modderplas: 50% bij niveau 1 en 75% bij niveau 2.</div>
+  </section>
+</main>
+<p class="foot">Family Athletics · Veel plezier en sportief racen!</p>
+</div>
+<script>
+(() => {
+  const names = ["Paul","Merel","Nienke","Tim","Luuk"];
+  const emojis = {"Paul":"🏃","Merel":"🏃‍♀️","Nienke":"🏃‍♀️","Tim":"🏃","Luuk":"🏃"};
+  const $ = id => document.getElementById(id);
+  const storageKey = "familyAthleticsChampionship_v3";
+  const economyKey = "familyAthleticsEconomy_v3";
+  let ranking = {}, economy = {};
+  try { ranking = JSON.parse(localStorage.getItem(storageKey) || "{}") || {}; } catch(e) { ranking = {}; }
+  let savedEconomy = {};
+  try { savedEconomy = JSON.parse(localStorage.getItem(economyKey) || "null") || JSON.parse(localStorage.getItem("familyAthleticsEconomy_v2") || "{}") || {}; } catch(e) { savedEconomy = {}; }
+  names.forEach(name => {
+    const old = savedEconomy[name] || {};
+    economy[name] = {coins:0,matches:Number(old.matches)||0,boost:Number(old.boost)||0,slow:Number(old.slow)||0,shoesLevel:Math.min(2,Math.max(0,Number(old.shoesLevel)||0)),protectionLevel:Math.min(2,Math.max(0,Number(old.protectionLevel)||0))};
+  });
+  try { localStorage.setItem(economyKey,JSON.stringify(economy)); } catch(e) {}
+  let positions = [0,0], finished = [false,false], times = [0,0], usedBoost=[false,false], usedSlow=[false,false];
+  let active = false, countdown = false, startAt = 0, soundOn = true, audio = null;
+  names.forEach(name => { $("p1").add(new Option(name,name)); $("p2").add(new Option(name,name)); });
+  $("p2").selectedIndex = 1;
+  names.forEach(name => $("shopPlayer").add(new Option(name,name)));
+
+  function saveEconomy() {
+    try { localStorage.setItem(economyKey,JSON.stringify(economy)); } catch(e) {}
+    renderWallets();
+  }
+  function renderWallets() {
+    const selected=$("shopPlayer").value || names[0], data=economy[selected] || {coins:0,boost:0,slow:0};
+    $("shopWallet").textContent="💰 "+selected+": €"+data.coins;
+    $("homeWallets").replaceChildren(...names.map(name=>{const item=document.createElement("div");item.className="player-wallet";item.textContent="💰 "+name+": €"+economy[name].coins;return item;}));
+    $("boostOwned").textContent="Op voorraad: "+data.boost;
+    $("slowOwned").textContent="Op voorraad: "+data.slow;
+    $("protectionLevel").textContent=data.protectionLevel===0?"Nog niet gekocht":data.protectionLevel===1?"Niveau 1 · 50% minder achteruit":"Niveau 2 · 75% minder achteruit";
+    $("buyProtection").textContent=data.protectionLevel===0?"Koop voor 5 munten":data.protectionLevel===1?"Upgrade voor 5 munten":"Maximaal niveau";
+    $("buyProtection").disabled=data.coins<5 || data.protectionLevel>=2;
+    $("shoesLevel").textContent=data.shoesLevel===0?"Nog niet gekocht":data.shoesLevel===1?"Niveau 1 · 5% sneller":"Niveau 2 · 10% sneller";
+    $("shoesDescription").textContent=data.shoesLevel===0?"Geeft jouw speler bij alle wedstrijden permanent 5% extra snelheid.":data.shoesLevel===1?"Upgrade jouw superschoenen naar 10% extra snelheid bij alle wedstrijden.":"Maximaal niveau bereikt: je bent bij alle wedstrijden 10% sneller!";
+    $("buyShoes").textContent=data.shoesLevel===0?"Koop voor 5 munten":data.shoesLevel===1?"Upgrade voor 5 munten":"Maximaal niveau";
+    $("buyShoes").disabled=data.coins<5 || data.shoesLevel>=2;
+    $("buyBoost").disabled=data.coins<3; $("buySlow").disabled=data.coins<3;
+    $("boost1").textContent="⚡ "+$("p1").value+": boost ("+economy[$("p1").value].boost+")";
+    $("slow1").textContent="🌀 "+$("p1").value+": vertraag ("+economy[$("p1").value].slow+")";
+    $("boost2").textContent="⚡ "+$("p2").value+": boost ("+economy[$("p2").value].boost+")";
+    $("slow2").textContent="🌀 "+$("p2").value+": vertraag ("+economy[$("p2").value].slow+")";
+  }
+
+  function beep(freq=600,duration=.09,type="sine",volume=.045) {
+    if (!soundOn) return;
+    try {
+      audio ||= new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === "suspended") audio.resume();
+      const osc=audio.createOscillator(), gain=audio.createGain();
+      osc.type=type; osc.frequency.value=freq; gain.gain.value=volume;
+      osc.connect(gain); gain.connect(audio.destination);
+      osc.start(); gain.gain.exponentialRampToValueAtTime(.001,audio.currentTime+duration);
+      osc.stop(audio.currentTime+duration);
+    } catch(e) {}
+  }
+  function renderRank() {
+    const entries = Object.entries(ranking).filter(([,v]) => v && v.races > 0)
+      .sort((a,b) => b[1].wins-a[1].wins || a[1].best-b[1].best);
+    if (!entries.length) { $("rankContent").innerHTML='<div class="rank-empty">Nog geen races gespeeld. Word de eerste kampioen!</div>'; return; }
+    const table=document.createElement("table");
+    table.innerHTML="<thead><tr><th>#</th><th>Naam</th><th>🏆 Winst</th><th>Races</th><th>Beste tijd</th></tr></thead>";
+    const body=document.createElement("tbody");
+    entries.forEach(([name,s],i)=>{
+      const tr=document.createElement("tr");
+      [String(i+1),name,String(s.wins),String(s.races),Number.isFinite(s.best)?s.best.toFixed(2)+" s":"—"].forEach((v,j)=>{
+        const td=document.createElement("td"); td.textContent=v; tr.append(td);
+      });
+      body.append(tr);
+    });
+    table.append(body); $("rankContent").replaceChildren(table);
+  }
+  function setRunner(i) {
+    $("r"+(i+1)).style.left = (2 + positions[i]*.95) + "%";
+  }
+  function showScreen(which) {
+    ["homeScreen","raceScreen","endScreen","shopScreen"].forEach(id => $(id).classList.toggle("active", id===which));
+  }
+  function resetRace() {
+    positions=[0,0]; finished=[false,false]; times=[0,0]; usedBoost=[false,false]; usedSlow=[false,false];
+    [1,2].forEach(n=>{
+      $("r"+n).style.left="2%"; $("r"+n).classList.remove("running");
+      $("lane"+n).classList.remove("done");
+      $("b"+n).disabled=false;
+    });
+    $("results").classList.remove("show");
+    $("status").textContent="KLAAR VOOR DE START?";
+    $("status").classList.remove("go");
+  }
+  function updateNames() {
+    const a=$("p1").value, b=$("p2").value;
+    $("label1").textContent="BAAN 1 · "+a.toUpperCase();
+    $("label2").textContent="BAAN 2 · "+b.toUpperCase();
+    $("r1").textContent=emojis[a]; $("r2").textContent=emojis[b];
+  }
+  function showResults() {
+    active=false;
+    const a=$("p1").value, b=$("p2").value;
+    $("res1").innerHTML=a+"<strong>"+times[0].toFixed(2)+" s</strong>";
+    $("res2").innerHTML=b+"<strong>"+times[1].toFixed(2)+" s</strong>";
+    const winner=times[0]===times[1]?"Gelijkspel!":times[0]<times[1]?a:b;
+    $("winner").textContent=winner==="Gelijkspel!"?"🤝 Het is gelijkspel!":"🥇 "+winner+" wint de race!";
+    $("results").classList.add("show");
+    showScreen("endScreen");
+    let rewardLines=[];
+    [a,b].forEach((name,i)=>{
+      const wallet=economy[name];
+      wallet.matches++;
+      const didWin = winner===name && winner!=="Gelijkspel!";
+      const didLose = winner!==name && winner!=="Gelijkspel!";
+      if(didWin) { wallet.coins++; rewardLines.push(name+" wint: +€1"); }
+      if(times[i]<6) { wallet.coins++; rewardLines.push(name+" onder 6 seconden: +1 munt"); }
+      else if(times[i]>7) { wallet.coins=Math.max(0,wallet.coins-1); rewardLines.push(name+" boven 7 seconden: −1 munt"); }
+      if(didLose) { wallet.coins=Math.max(0,wallet.coins-1); rewardLines.push(name+" verliest de wedstrijd: −€1"); }
+      if(wallet.matches%3===0) { wallet.coins++; rewardLines.push(name+" heeft "+wallet.matches+" races gespeeld: +€1"); }
+      if (!ranking[name]) ranking[name]={wins:0,races:0,best:Infinity};
+      if(times[i] < (Number(ranking[name].best) || Infinity)) {
+        wallet.coins += 3;
+        rewardLines.push(name+" heeft een persoonlijk snelheidsrecord: +3 munten!");
+      }
+      ranking[name].races++;
+      ranking[name].best=Math.min(Number(ranking[name].best)||Infinity,times[i]);
+    });
+    saveEconomy();
+    $("rewardNote").textContent=rewardLines.length?"💰 Beloningen: "+rewardLines.join(" · "):"Deze keer geen extra munten. Probeer een doelstelling te halen!";
+    if(winner!=="Gelijkspel!") ranking[winner].wins++;
+    try { localStorage.setItem(storageKey,JSON.stringify(ranking)); } catch(e) {}
+    renderRank(); $("start").textContent="🔁 Nog een race";
+    $("status").textContent="FINISH!"; beep(880,.25,"triangle");
+  }
+  function finishPlayer(i) {
+    if(finished[i]) return;
+    finished[i]=true;
+    times[i]=(performance.now()-startAt)/1000;
+    $("r"+(i+1)).classList.remove("running");
+    $("lane"+(i+1)).classList.add("done");
+    $("b"+(i+1)).disabled=true;
+    beep(950,.16,"triangle");
+    // Zodra beide spelers klaar zijn, verschijnt de uitslag automatisch.
+    if(finished.every(Boolean)) showResults();
+  }
+  function tap(i) {
+    if(!active || finished[i]) return;
+    const shoeMultiplier=1+(economy[i===0?$("p1").value:$("p2").value].shoesLevel*0.05);
+    positions[i]=Math.min(100,positions[i]+(2.2+Math.random()*1.15)*shoeMultiplier);
+    setRunner(i); $("r"+(i+1)).classList.add("running"); beep(i===0?540:680,.035,"square",.018);
+    if(positions[i]>=100) finishPlayer(i);
+  }
+  function usePower(i,type) {
+    if(!active || finished[i]) return;
+    const name=i===0?$("p1").value:$("p2").value, wallet=economy[name];
+    if(type==="boost") {
+      if(wallet.boost<1 || usedBoost[i]) return;
+      wallet.boost--; usedBoost[i]=true; positions[i]=Math.min(100,positions[i]+20); setRunner(i); if(positions[i]>=100) finishPlayer(i);
+      $("status").textContent="⚡ "+name+" gebruikt SUPERSRPINT!";
+    } else {
+      if(wallet.slow<1 || usedSlow[i]) return;
+      wallet.slow--; usedSlow[i]=true;
+      const opponent=1-i;
+      if(!finished[opponent]) {
+        const opponentName=opponent===0?$("p1").value:$("p2").value;
+        const protectionLevel=economy[opponentName].protectionLevel||0;
+        const protectionPercent=protectionLevel===1?0.50:protectionLevel>=2?0.75:0;
+        const setback=16*(1-protectionPercent);
+        positions[opponent]=Math.max(0,positions[opponent]-setback);
+        setRunner(opponent);
+        if(protectionLevel>0) $("status").textContent="🛡️ "+opponentName+" wordt beschermd tegen de modderplas!";
+      }
+      $("status").textContent="🌀 "+name+" vertraagt de tegenstander!";
+    }
+    saveEconomy(); renderWallets(); beep(type==="boost"?1000:260,.2,"triangle");
+  }
+  async function startRace() {
+    if(countdown || active) return;
+    if($("p1").value===$("p2").value) { $("status").textContent="Kies twee verschillende racers!"; beep(180,.2,"sawtooth"); return; }
+    updateNames(); resetRace(); showScreen("raceScreen"); countdown=true; $("start").disabled=true;
+    for(let n=3;n>=1;n--) {
+      $("status").textContent=String(n); beep(420+n*100,.12);
+      await new Promise(resolve=>setTimeout(resolve,700));
+    }
+    $("status").textContent="START!"; $("status").classList.add("go"); beep(1050,.32,"square");
+    startAt=performance.now(); active=true; countdown=false; $("start").disabled=false;
+  }
+  $("start").addEventListener("click",startRace);
+  $("openShop").addEventListener("click",()=>{ renderWallets(); showScreen("shopScreen"); });
+  $("shopBackTop").addEventListener("click",()=>showScreen("homeScreen"));
+  $("shopPlayer").addEventListener("change",renderWallets);
+  $("buyShoes").addEventListener("click",()=>{
+    const w=economy[$("shopPlayer").value];
+    if(w.coins<5 || w.shoesLevel>=2) return;
+    w.coins-=5; w.shoesLevel++; saveEconomy(); beep(920,.16,"triangle");
+  });
+  $("buyProtection").addEventListener("click",()=>{
+    const w=economy[$("shopPlayer").value];
+    if(w.coins<5 || w.protectionLevel>=2) return;
+    w.coins-=5; w.protectionLevel++; saveEconomy(); beep(920,.16,"triangle");
+  });
+  $("buyBoost").addEventListener("click",()=>{
+    const w=economy[$("shopPlayer").value]; if(w.coins<3)return;
+    w.coins-=3; w.boost++; saveEconomy(); beep(800,.12,"triangle");
+  });
+  $("buySlow").addEventListener("click",()=>{
+    const w=economy[$("shopPlayer").value]; if(w.coins<3)return;
+    w.coins-=3; w.slow++; saveEconomy(); beep(700,.12,"triangle");
+  });
+  $("boost1").addEventListener("click",()=>usePower(0,"boost"));
+  $("slow1").addEventListener("click",()=>usePower(0,"slow"));
+  $("boost2").addEventListener("click",()=>usePower(1,"boost"));
+  $("slow2").addEventListener("click",()=>usePower(1,"slow"));
+  $("continueHome").addEventListener("click",()=>{ resetRace(); showScreen("homeScreen"); $("start").textContent="🏁 Start de race"; });
+  // Pointer events register each finger independently, including simultaneous touches.
+  $("b1").addEventListener("pointerdown",e=>{ e.preventDefault(); tap(0); });
+  $("b2").addEventListener("pointerdown",e=>{ e.preventDefault(); tap(1); });
+  document.addEventListener("keydown",e=>{
+    if(e.repeat) return;
+    if(e.key.toLowerCase()==="a") tap(0);
+    if(e.key.toLowerCase()==="l") tap(1);
+  });
+  $("p1").addEventListener("change",()=>{updateNames();renderWallets();}); $("p2").addEventListener("change",()=>{updateNames();renderWallets();});
+  $("sound").addEventListener("click",()=>{soundOn=!soundOn;$("sound").textContent=soundOn?"🔊 Geluid aan":"🔇 Geluid uit";if(soundOn)beep();});
+  $("resetRank").addEventListener("click",()=>{
+    if(confirm("Weet je zeker dat je het hele klassement wilt wissen?")) {
+      ranking={}; try{localStorage.removeItem(storageKey);}catch(e){} renderRank();
+    }
+  });
+  updateNames(); renderRank(); resetRace(); showScreen("homeScreen"); renderWallets();
+})();
+</script>
+</body>
+</html>
